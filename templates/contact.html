@@ -1,0 +1,81 @@
+$def with (form, data)
+
+<html>
+	<head>
+		<script type="text/javascript">
+			function select_contact_row(obj)
+			{
+				row = document.getElementById(obj.id);
+				document.getElementById("Contact_Id").value = row.cells[0].innerHTML;
+				document.getElementById("Name").value = row.cells[1].innerHTML;
+				document.getElementById("Telephone1").value = row.cells[2].innerHTML;
+				document.getElementById("Telephone2").value = row.cells[3].innerHTML;
+				document.getElementById("Location").value = row.cells[4].innerHTML;
+				document.getElementById("Industry").value = row.cells[5].innerHTML;
+			}
+
+			function submit_contact(obj)
+			{
+				var form_contact = document.getElementById("form_submit_contact")
+
+				if (obj.id=='btn_submit')
+				{
+					form_contact.action = "";
+				}
+				else if (obj.id=='btn_delete')
+				{
+					var id = document.getElementById("Contact_Id").value
+					form_contact.action = "/contact/del/" + id
+				}
+				else
+				{
+					return
+				}
+
+				form_contact.submit()
+			}
+		</script>
+	</head>
+	<title>contacts</title>
+	<body>
+		<form id="form_submit_contact" method='POST'>
+			<table>
+				<tr>
+					$:form.render()
+				</tr>
+				<tr>
+					<td><input type='button' id='btn_submit' value='submit' onclick=submit_contact(this) /></td>
+					<td><input type='button'id='btn_delete' value='delete' onclick=submit_contact(this) /></td>
+				</tr>
+			</table>
+		</form>
+		<table id='contacts'>
+			<tr>
+				<a href='vcf/all.vcf'>Download All</a>
+			</tr>
+			<tr>
+				<td hidden=true></td>
+				<td>name</td>
+				<td>telephone1</td>
+				<td>telephone2</td>
+				<td>location</td>
+				<td>industry</td>
+				<td>last update</td>
+			</tr>
+			$if data:
+				$ x = 0
+				$for row in data:
+					$ x = x + 1
+					<tr id=contact_id_$x ondblclick=select_contact_row(this)>
+						<td hidden=true>$row.id</td>
+						<td>$row.name</td>
+						<td>$row.telephone1</td>
+						<td>$row.telephone2</td>
+						<td>$row.location</td>	
+						<td>$row.industry</td>			
+						<td>$row.lastupdate[:10]</td>
+						<td><a href='vcf/$(row.id).vcf'>Download</a>
+					</tr>
+		</table>
+	</body>
+</html>
